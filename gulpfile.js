@@ -13,7 +13,9 @@ let
   responsive = require('gulp-responsive-images'),
   imageminJpegRecompress = require('imagemin-jpeg-recompress'),
   imageminMozjpeg = require('imagemin-mozjpeg'),
-  imageminWebp = require('imagemin-webp')
+  imageminWebp = require('imagemin-webp'),
+  extReplace = require("gulp-ext-replace"),
+  webp = require('gulp-webp')
 ;
 
 // /////////////////////////////////////////
@@ -52,49 +54,103 @@ gulp.task('svgMinify', function () {
 // /////////////////////////////////////////
 
 // GENERATE HEADER IMAGES
-gulp.task('cleanHeaderImages', function () {
-  return del([
-    'public/images/headerImages/low/**',
-    'public/images/headerImages/high/**',
-    '!public/images/'
-  ]);
-});
-
-gulp.task('generateHeaderImagesLow', function () {
-  return gulp
-    .src('src/images/headerImages/*.jpg')
-    .pipe(
-      imagemin([
-        imageminMozjpeg({
-          quality: 50
+gulp.task("headerImagesJpg", () => {
+  //   specify different image sizes
+  const sizes = [
+    { width: 1000, quality: 50, suffix: "low" },
+    { width: 1000, quality: 100, suffix: "high" },
+  ]
+  let stream
+  sizes.forEach(size => {
+    stream = gulp
+      //     source for images to optimize
+      .src("src/images/headerImages/**/*.jpg")
+      //     resize image
+      .pipe(imageResize({ width: size.width }))
+      //       add suffix to image
+      .pipe(
+        rename(path => {
+          path.basename += `-${size.suffix}`
         })
-        //imageminWebp({quality: 75}),
-      ])
-    )
-    .pipe(gulp.dest('public/images/headerImages/low'));
+      )
+      //     reduce image quality based on the size
+      .pipe(
+        imagemin(
+          [
+            imageminMozjpeg({
+              quality: size.quality,
+            })
+          ],
+          {
+            verbose: true,
+          }
+        )
+      )
+      //     output optimized images to a destination folder
+      .pipe(gulp.dest("dist/images/headerImages"))
+  })
+  return stream
 });
+gulp.task("headerImagesWebp", function() {
+  //let src = "src/images/**/*.{jpg,png}"; // Where your images are coming from.
+  let src = "src/images/headerImages/**/*.jpg";
+  //let dest = "dist/images"; // Where your WebPs are going.
+  let dest = "dist/images/headerImages";
+  return gulp.src(src)
+    .pipe(imagemin([
+      imageminWebp({
+        // lossless: true, if pngs turn out sucky uncomment this and redo just pngs
+        quality: 100
+      })
+    ]))
+    .pipe(extReplace(".webp"))
+    .pipe(gulp.dest(dest));
+});
+gulp.task('cleanheaderImages', function () {
+  return del(['dist/images/headerImages/**']);
+});
+gulp.task('headerImages', gulp.series('cleanheaderImages', 'headerImagesJpg', 'headerImagesWebp'));
 
-gulp.task('generateHeaderImagesHigh', function () {
-  return gulp
-    .src('src/images/headerImages/*.jpg')
+
+gulp.task('areaImagesWebp', () =>
+  gulp
+    .src('src/images/areas/**/*.jpg')
+    .pipe(imageResize({ width: 320 }))
+    .pipe(webp())
+    .pipe(gulp.dest('dist/images/areas'))
+);
+
+gulp.task('navigationThumbsJPG', () =>
+    gulp
+    .src('src/images/areas/**/*.jpg')
     .pipe(
-      imagemin([
-        imageminMozjpeg({
-          quality: 100
-        })
-        //imageminWebp({quality: 75}),
-      ])
+      imageResize({
+        width: 24,
+        height: 24,
+        crop: true,
+        upscale: false,
+        imageMagick: true
+      })
     )
-    .pipe(gulp.dest('public/images/headerImages/high'));
-});
+    .pipe(imagemin())
+    .pipe(gulp.dest('dist/images/navigationThumbs'))
+);
 
-gulp.task(
-  'generateImagesHeader',
-  gulp.series(
-    'cleanHeaderImages',
-    'generateHeaderImagesLow',
-    'generateHeaderImagesHigh'
-  )
+gulp.task('navigationThumbsWebP', () =>
+    gulp
+    .src('src/images/areas/**/*.jpg')
+    .pipe(
+      imageResize({
+        width: 24,
+        height: 24,
+        crop: true,
+        upscale: false,
+        imageMagick: true
+      })
+    )
+    //.pipe(imagemin())
+    .pipe(webp())
+    .pipe(gulp.dest('dist/images/navigationThumbs'))
 );
 
 // GENERATE AREA IMAGES
@@ -198,43 +254,54 @@ gulp.task("images", () => {
 })
 
 // GENERATE TOPO IMAGES
+gulp.task("topoImagesJpg", () => {
+  const sizes = [
+    { width: 1000, quality: 30, suffix: "low" },
+    { width: 1000, quality: 100, suffix: "high" },
+  ]
+  let stream
+  sizes.forEach(size => {
+    stream = gulp
+      .src("src/images/topos/**/*.jpg")
+      .pipe(imageResize({ width: size.width }))
+      .pipe(
+        rename(path => {
+          path.basename += `-${size.suffix}`
+        })
+      )
+      .pipe(
+        imagemin(
+          [
+            imageminMozjpeg({
+              quality: size.quality,
+            })
+          ],
+          {
+            verbose: true,
+          }
+        )
+      )
+      .pipe(gulp.dest("dist/images/topos"))
+  })
+  return stream
+});
+gulp.task("toposImagesWebp", function() {
+  let src = "src/images/topos/**/*.jpg";
+  let dest = "dist/images/topos";
+  return gulp.src(src)
+    .pipe(imagemin([
+      imageminWebp({
+        quality: 70
+      })
+    ]))
+    .pipe(extReplace(".webp"))
+    .pipe(gulp.dest(dest));
+});
 gulp.task('cleanTopos', function () {
-  return del(['public/images/topos/low/**', 'public/images/topos/high/**', '!public/images/']);
+  return del(['dist/images/topos/low/**', 'dist/images/topos/high/**', 'dist/images/topos/**', '!dist/images/']);
 });
-gulp.task('generateTopoLow', function () {
-  return gulp
-    .src('src/images/topos/*.jpg')
-    .pipe(
-      imagemin([
-        imageminMozjpeg({
-          quality: 30
-        })
-      ])
-    )
-    .pipe(gulp.dest('public/images/topos/low'));
-});
+gulp.task('generateTopos', gulp.series('cleanTopos', 'topoImagesJpg', 'toposImagesWebp'));
 
-gulp.task('generateTopoHigh', function () {
-  return gulp
-    .src('src/images/topos/*.jpg')
-    .pipe(
-      imagemin([
-        imageminMozjpeg({
-          quality: 100
-        })
-      ])
-    )
-    .pipe(gulp.dest('public/images/topos/high'));
-});
-
-gulp.task(
-  'generateTopos',
-  gulp.series(
-    'cleanTopos',
-    'generateTopoLow',
-    'generateTopoHigh'
-  )
-);
 
 gulp.task('clean', function () {
   return del(['build/images/galerie/**', '!build/images/']);
