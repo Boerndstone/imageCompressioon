@@ -58,9 +58,24 @@ gulp.task('navigationThumbsWebP', () =>
     .pipe(webp())
     .pipe(gulp.dest('dist/images/navigationThumbs'))
 );
+gulp.task('galerieImagesNew', () =>
+    gulp
+    .src(['src/images/galerie/**/*.jpg','src/images/galerie/**/*.JPG'])
+    .pipe(
+      imageResize({
+        width: 1000,
+        height: 563,
+        crop: true,
+        upscale: false,
+        imageMagick: true
+      })
+    )
+    .pipe(webp())
+    .pipe(gulp.dest('dist/images/galerie-new'))
+);
 gulp.task("convertImages", () => {
   const sizes = [
-    { width: 1000, quality: 30, suffix: "low" },
+    { width: 200, quality: 100, suffix: "low" },
     { width: 1000, quality: 100, suffix: "high" },
   ]
   let stream
@@ -104,4 +119,4 @@ gulp.task("imagesWebp", function() {
 gulp.task('delImages', function () {
   return del(['dist/images/**/*', '!dist/images/']);
 });
-gulp.task('generateImages', gulp.series('delImages', 'convertImages', 'imagesWebp', 'navigationThumbsJPG', 'navigationThumbsWebP', 'areaImagesWebp'));
+gulp.task('generateImages', gulp.series('delImages', 'convertImages', 'imagesWebp', 'navigationThumbsJPG', 'navigationThumbsWebP', 'areaImagesWebp', 'galerieImagesNew'));
