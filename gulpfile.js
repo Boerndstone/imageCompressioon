@@ -119,6 +119,7 @@ gulp.task("navigation", () => {
 
 gulp.task("galerie", () => {
   const sizes = [
+    { width: 100, quality: 80, suffix: "_thumb" },
     { width: 1000, quality: 100, suffix: "" },
     { width: 2000, quality: 100, suffix: "@2x" },
     { width: 2000, quality: 80, suffix: "@3x" },
