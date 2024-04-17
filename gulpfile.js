@@ -141,7 +141,7 @@ gulp.task("galerie", () => {
         ])
       )
       .pipe(webp())
-      .pipe(gulp.dest("dist/images/galerie"));
+      .pipe(gulp.dest("../munichclimbs.de/public/uploads/galerie"));
   });
   return stream;
 });
