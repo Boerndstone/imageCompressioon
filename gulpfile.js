@@ -21,7 +21,6 @@ let gulp = require("gulp"),
 // Mobile Portrait Mode max 400 px Landscape Mode ist fast wie Desktop
 
 gulp.task("topos", () => {
-  del(gulp.dest("../munichclimbs.de/public/uploads/topos/**/*.webp"));
   const sizes = [
     { width: 750, quality: 5, suffix: "-low" },
     { width: 750, quality: 100, suffix: "-high" },
@@ -46,13 +45,12 @@ gulp.task("topos", () => {
         ])
       )
       .pipe(webp())
-      .pipe(gulp.dest("../munichclimbs.de/public/uploads/topos"));
+      .pipe(gulp.dest("dist/images/topos"));
   });
   return stream;
 });
 
 gulp.task("areas", () => {
-  del(gulp.dest("../munichclimbs.de/public/uploads/areas/**/*.webp"));
   const sizes = [
     { width: 400, quality: 100, suffix: "" },
     { width: 800, quality: 100, suffix: "@2x" },
@@ -76,13 +74,13 @@ gulp.task("areas", () => {
         ])
       )
       .pipe(webp())
-      .pipe(gulp.dest("../munichclimbs.de/public/uploads/areas"));
+      .pipe(gulp.dest("dist/images/areas"));
   });
   return stream;
 });
 
 gulp.task("navigation", () => {
-  del(gulp.dest("../munichclimbs.de/public/uploads/navigation/**/*.webp"));
+  del("dist/images/navigation/**/*");
   const sizes = [
     { width: 24, height: 24, quality: 100, suffix: "" },
     { width: 48, height: 48, quality: 100, suffix: "@2x" },
@@ -114,7 +112,7 @@ gulp.task("navigation", () => {
         ])
       )
       .pipe(webp())
-      .pipe(gulp.dest("../munichclimbs.de/public/uploads/navigation"));
+      .pipe(gulp.dest("../munichclimbs.de/public/uploads/test"));
   });
   return stream;
 });
