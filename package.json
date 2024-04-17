@@ -27,7 +27,6 @@
     "babel-polyfill": "^6.26.0",
     "babel-preset-es2015": "^6.24.1",
     "gulp": "^4.0.2",
-    "gulp-img-retina": "0.0.4",
-    "imagemin-mozjpeg": "^10.0.0"
+    "gulp-img-retina": "0.0.4"
   }
 }

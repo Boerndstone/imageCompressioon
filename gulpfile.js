@@ -25,6 +25,7 @@ gulp.task("topos", () => {
     { width: 750, quality: 5, suffix: "-low" },
     { width: 750, quality: 100, suffix: "-high" },
     { width: 1024, quality: 100, suffix: "@2x" },
+    { width: 750, quality: 100, suffix: "" },
   ];
   let stream;
   sizes.forEach((size) => {
@@ -119,7 +120,7 @@ gulp.task("navigation", () => {
 gulp.task("galerie", () => {
   const sizes = [
     { width: 1000, quality: 100, suffix: "" },
-    { width: 1000, quality: 100, suffix: "@2x" },
+    { width: 2000, quality: 100, suffix: "@2x" },
     { width: 2000, quality: 80, suffix: "@3x" },
   ];
   let stream;
