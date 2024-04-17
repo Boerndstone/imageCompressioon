@@ -80,7 +80,7 @@ gulp.task("areas", () => {
 });
 
 gulp.task("navigation", () => {
-  del("../munichclimbs.de/public/uploads/navigation/**/*");
+  // del("../munichclimbs.de/public/uploads/navigation/**/*");
   const sizes = [
     { width: 24, height: 24, quality: 100, suffix: "" },
     { width: 48, height: 48, quality: 100, suffix: "@2x" },
