@@ -112,7 +112,7 @@ gulp.task("navigation", () => {
         ])
       )
       .pipe(webp())
-      .pipe(gulp.dest("dist/images/navigation"));
+      .pipe(gulp.dest("../munichclimbs.de/public/uploads/test"));
   });
   return stream;
 });
