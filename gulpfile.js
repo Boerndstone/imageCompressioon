@@ -147,6 +147,47 @@ gulp.task("galerie", () => {
   return stream;
 });
 
+gulp.task("header", () => {
+  const sizes = [
+    { width: 1320, quality: 10, suffix: "-large-low-@1x" },
+    { width: 1320, quality: 100, suffix: "-large-@1x" },
+    { width: 2640, quality: 100, suffix: "-large-@2x" },
+    { width: 3960, quality: 100, suffix: "-large-@3x" },
+    { width: 800, quality: 10, suffix: "-medium-low-@1x" },
+    { width: 800, quality: 100, suffix: "-medium-@1x" },
+    { width: 1600, quality: 100, suffix: "-medium-@2x" },
+    { width: 2400, quality: 100, suffix: "-medium-@3x" },
+    { width: 480, quality: 10, suffix: "-small-low-@1x" },
+    { width: 480, quality: 100, suffix: "-small-@1x" },
+    { width: 960, quality: 100, suffix: "-small-@2x" },
+    { width: 1440, quality: 100, suffix: "-small-@3x" },
+  ];
+  del("dist/images/header/**/*");
+  let src = "src/images/header/*.jpg";
+  let dest = "dist/images/header";
+  let stream;
+  sizes.forEach((size) => {
+    stream = gulp
+      .src(src)
+      .pipe(imageResize({ width: size.width }))
+      .pipe(
+        rename((path) => {
+          path.basename += `${size.suffix}`;
+        })
+      )
+      .pipe(
+        imagemin([
+          imageminWebp({
+            quality: size.quality,
+          }),
+        ])
+      )
+      .pipe(webp())
+      .pipe(gulp.dest(dest));
+  });
+  return stream;
+});
+
 const sizes = [
   { quality: 10, suffix: "low" },
   { quality: 80, suffix: "high" },
